@@ -1,0 +1,434 @@
+Program.Sub.ScreenSU.Start
+
+Gui.Form1..Create
+Gui.Form1..Caption("Select Import File")
+Gui.Form1..Size(5355,2145)
+Gui.Form1..Position(0,0)
+Gui.Form1..AlwaysOnTop(False)
+Gui.Form1..FontName("Arial")
+Gui.Form1..FontSize(7)
+Gui.Form1..ForeColor(0)
+Gui.Form1..Backcolor(-2147483633)
+Gui.Form1..ControlBox(True)
+Gui.Form1..MaxButton(False)
+Gui.Form1..MinButton(False)
+Gui.Form1..MousePointer(0)
+Gui.Form1..Moveable(True)
+Gui.Form1..Sizeable(False)
+Gui.Form1..ShowInTaskBar(False)
+Gui.Form1..TitleBar(True)
+
+Gui.Form1..Event(unload,Form1_Unload)
+
+Gui.Form1.lblFile.Create(label)
+Gui.Form1.lblFile.Caption("Import File")
+Gui.Form1.lblFile.Visible(True)
+Gui.Form1.lblFile.Size(1500,300)
+Gui.Form1.lblFile.Zorder(0)
+Gui.Form1.lblFile.Position(195,195)
+Gui.Form1.lblFile.Enabled(True)
+Gui.Form1.lblFile.Alignment(0)
+Gui.Form1.lblFile.FontName("Arial")
+Gui.Form1.lblFile.FontSize(7)
+Gui.Form1.lblFile.Backcolor(-2147483633)
+Gui.Form1.lblFile.BackStyle(0)
+Gui.Form1.lblFile.Tooltip("")
+Gui.Form1.lblFile.ControlGroup(0)
+
+
+Gui.Form1.txtFile.Create(textbox)
+Gui.Form1.txtFile.Text("")
+Gui.Form1.txtFile.Visible(True)
+Gui.Form1.txtFile.Size(4500,300)
+Gui.Form1.txtFile.Zorder(0)
+Gui.Form1.txtFile.Position(195,540)
+Gui.Form1.txtFile.Enabled(True)
+Gui.Form1.txtFile.Alignment(0)
+Gui.Form1.txtFile.FontName("Arial")
+Gui.Form1.txtFile.FontSize(7)
+Gui.Form1.txtFile.Backcolor(16777215)
+Gui.Form1.txtFile.BorderStyle(1)
+Gui.Form1.txtFile.TabStop(True)
+Gui.Form1.txtFile.TabIndex(10)
+Gui.Form1.txtFile.Tooltip("")
+Gui.Form1.txtFile.ControlGroup(0)
+Gui.Form1.txtFile.DefaultValue("")
+
+
+Gui.Form1.cmdFile.Create(button)
+Gui.Form1.cmdFile.Caption("^")
+Gui.Form1.cmdFile.Visible(True)
+Gui.Form1.cmdFile.Size(315,345)
+Gui.Form1.cmdFile.Zorder(0)
+Gui.Form1.cmdFile.Position(4800,525)
+Gui.Form1.cmdFile.Enabled(True)
+Gui.Form1.cmdFile.FontName("Arial")
+Gui.Form1.cmdFile.FontSize(7)
+Gui.Form1.cmdFile.TabStop(True)
+Gui.Form1.cmdFile.TabIndex(20)
+Gui.Form1.cmdFile.Tooltip("")
+Gui.Form1.cmdFile.ControlGroup(0)
+Gui.Form1.cmdFile.DefaultValue("")
+
+Gui.Form1.cmdFile.Event(click,cmdFile_Click)
+
+Gui.Form1.cmdOK.Create(button)
+Gui.Form1.cmdOK.Caption("OK")
+Gui.Form1.cmdOK.Visible(True)
+Gui.Form1.cmdOK.Size(1125,345)
+Gui.Form1.cmdOK.Zorder(0)
+Gui.Form1.cmdOK.Position(200,1155)
+Gui.Form1.cmdOK.Enabled(True)
+Gui.Form1.cmdOK.FontName("Arial")
+Gui.Form1.cmdOK.FontSize(7)
+Gui.Form1.cmdOK.TabStop(True)
+Gui.Form1.cmdOK.TabIndex(30)
+Gui.Form1.cmdOK.Tooltip("")
+Gui.Form1.cmdOK.ControlGroup(0)
+Gui.Form1.cmdOK.DefaultValue("")
+
+Gui.Form1.cmdOK.Event(click,cmdOK_Click)
+
+Program.Sub.ScreenSU.End
+
+Program.Sub.Preflight.Start
+Variable.UDT.uPO.Define("sPOType",String)
+Variable.UDT.uPO.Define("sPONum",String)
+Variable.UDT.uPO.Define("sCreateDate",String)
+Variable.UDT.uPO.Define("sGenOrdNum",String)
+Variable.UDT.uPO.Define("sBuyCon",String)
+Variable.UDT.uPO.Define("sHeadNote",String)
+Variable.UDT.uPO.Define("sShipper",String)
+Variable.UDT.uPO.Define("sCurr",String)
+Variable.UDT.uPO.Define("sBillTo",String)
+Variable.UDT.uPO.Define("sShipTo",String)
+Variable.UDT.uPO.Define("sItemNum",String)
+Variable.UDT.uPO.Define("sUOM",String)
+Variable.UDT.uPO.Define("sUnitPrice",String)
+Variable.UDT.uPO.Define("sVenCatNum",String)
+Variable.UDT.uPO.Define("sBuyPartNum",String)
+Variable.UDT.uPO.Define("sEngDrawNum",String)
+Variable.UDT.uPO.Define("sItemNote",String)
+Variable.UDT.uPO.Define("sItemTotAmt",String)
+Variable.UDT.uPO.Define("sRelNum",String)
+Variable.UDT.uPO.Define("sRelQty",String)
+Variable.UDT.uPO.Define("sRelNote",String)
+Variable.UDT.uPO.Define("sPOStatus",String)
+Variable.UDT.uPO.Define("sPODate",string)
+Variable.UDT.uPO.Define("dDueDate",Date)
+Variable.UDT.uPO.Define("dRelDueDate",String)
+Variable.UDT.uPO.Define("sID",String)
+Variable.UDT.uPO.Define("sItemQty",String)
+Variable.uGlobal.uPO.Declare("uPO")
+
+Program.Sub.Preflight.End
+
+Program.Sub.Main.Start
+F.Intrinsic.Control.SetErrorHandler("Main_Err")
+F.Intrinsic.Control.ClearErrors
+
+V.Local.sError.Declare(String)
+
+F.ODBC.Connection!conx.OpenConnection(v.Ambient.PDSN, v.Ambient.PUser, v.Ambient.PPass)
+
+'Format the Dates in the udt
+F.Intrinsic.Variable.SetUDTFieldDateMask(v.uGlobal.uPO!dDueDate, "YYYYMMDD")
+f.Intrinsic.Variable.SetUDTFieldDateMask(v.uGlobal.uPO!dRelDueDate, "YYYYMMDD")
+Gui.Form1..Show
+
+F.Intrinsic.Control.ExitSub
+
+F.Intrinsic.Control.Label("Main_Err")
+F.Intrinsic.Control.If(V.Ambient.ErrorNumber,<>,0)
+	Function.Intrinsic.String.Concat("Project: GCG_MON_3542_EDI_Import.gas",V.Ambient.Newline,V.Ambient.Newline,"Subroutine: ",V.Ambient.CurrentSubroutine,V.Ambient.NewLine,"Error Occurred ",V.Ambient.ErrorNumber," with description ",V.Ambient.ErrorDescription,V.Local.sError)
+	F.Intrinsic.UI.Msgbox(V.Local.sError)
+	F.Intrinsic.Control.CallSub(form1_unload)
+Function.Intrinsic.Control.EndIf
+
+
+Program.Sub.Main.End
+
+Program.Sub.cmdOK_Click.Start
+F.Intrinsic.Control.SetErrorHandler("cmdOK_Click_Err")
+F.Intrinsic.Control.ClearErrors
+
+V.Local.sError.Declare(String)
+
+'Process the file
+v.Local.sFile.Declare(String)
+v.Local.sExcel.Declare(String)
+v.Local.iUbound.Declare(String)
+
+F.Intrinsic.Control.If(v.Screen.Form1!txtFile.Text,!=, "")
+	'check file extension only excel file types can be used.
+	v.Local.sFile.Set(v.Screen.Form1!txtFile.Text)
+	F.Intrinsic.String.Split(v.Local.sFile.Trim, ".", v.Local.sExcel)
+	v.Local.iUbound.Set(v.Local.sExcel.UBound)
+	F.Intrinsic.Control.If(v.Local.sExcel(v.Local.iUbound).Trim, =, "xls", "OR", v.Local.sExcel(v.Local.iUbound).Trim, =, "xlsx")
+		'We have a good file extension
+		Gui.Form1..Visible(False)
+		'lets read the file
+		f.Intrinsic.Control.CallSub(excel, "sFile", v.Local.sFile)
+		F.Intrinsic.Control.CallSub(createfile,"sFileData", v.Args.sFileData)
+		F.Global.General.CallWrapperSync(50,"ORD040GI")
+		F.Global.General.CallWrapperSync(50,"ORD045GI")
+		F.Intrinsic.Control.CallSub(Form1_unload)	
+	F.Intrinsic.Control.Else
+		f.Intrinsic.UI.Msgbox("The file selected is not an excel file!", "Error")
+		gui.Form1.txtFile.Text("")
+		Gui.Form1.txtFile.SetFocus
+		F.Intrinsic.Control.ExitSub
+	F.Intrinsic.Control.EndIf
+f.Intrinsic.Control.Else
+	F.Intrinsic.UI.Msgbox("No File Selected!", "Error")
+	Gui.Form1.txtFile.SetFocus
+	F.Intrinsic.Control.ExitSub
+F.Intrinsic.Control.EndIf
+'read the excel
+
+F.Intrinsic.Control.ExitSub
+
+F.Intrinsic.Control.Label("cmdOK_Click_Err")
+F.Intrinsic.Control.If(V.Ambient.ErrorNumber,<>,0)
+	Function.Intrinsic.String.Concat("Project: GCG_MON_3542_EDI_Import.gas",V.Ambient.Newline,V.Ambient.Newline,"Subroutine: ",V.Ambient.CurrentSubroutine,V.Ambient.NewLine,"Error Occurred ",V.Ambient.ErrorNumber," with description ",V.Ambient.ErrorDescription,V.Local.sError)
+	F.Intrinsic.UI.Msgbox(V.Local.sError)
+	F.Intrinsic.Control.CallSub(form1_unload)
+Function.Intrinsic.Control.EndIf
+
+
+Program.Sub.cmdOK_Click.End
+
+Program.Sub.cmdFile_Click.Start
+F.Intrinsic.Control.SetErrorHandler("cmdFile_Click_Err")
+F.Intrinsic.Control.ClearErrors
+
+V.Local.sError.Declare(String)
+
+'find the file, place it in the textbox.  If not file selected inform user.
+v.Local.sFile.Declare(String)
+
+F.Intrinsic.UI.ShowOpenFileDialog("","xls|*xls|xlsx|*xlsx",v.Caller.FilesDir,v.Local.sFile)
+
+F.Intrinsic.Control.If(v.Local.sFile,!=,"***CANCEL***")
+	'file reterived
+	Gui.Form1.txtFile.Text(v.Local.sFile)
+	Gui.Form1.cmdOK.SetFocus
+F.Intrinsic.Control.Else
+	F.Intrinsic.UI.Msgbox("No file Selected!")
+	Gui.Form1.txtFile.SetFocus
+F.Intrinsic.Control.EndIf
+
+F.Intrinsic.Control.ExitSub
+
+F.Intrinsic.Control.Label("cmdFile_Click_Err")
+F.Intrinsic.Control.If(V.Ambient.ErrorNumber,<>,0)
+	Function.Intrinsic.String.Concat("Project: GCG_MON_3542_EDI_Import.gas",V.Ambient.Newline,V.Ambient.Newline,"Subroutine: ",V.Ambient.CurrentSubroutine,V.Ambient.NewLine,"Error Occurred ",V.Ambient.ErrorNumber," with description ",V.Ambient.ErrorDescription,V.Local.sError)
+	F.Intrinsic.UI.Msgbox(V.Local.sError)
+	F.Intrinsic.Control.CallSub(form1_unload)
+Function.Intrinsic.Control.EndIf
+
+
+Program.Sub.cmdFile_Click.End
+
+Program.Sub.Form1_Unload.Start
+F.Intrinsic.Control.SetErrorHandler("Form1_Unload_Err")
+F.Intrinsic.Control.ClearErrors
+
+V.Local.sError.Declare(String)
+
+F.ODBC.Connection!conx.Close
+F.Intrinsic.Control.End
+
+F.Intrinsic.Control.ExitSub
+
+F.Intrinsic.Control.Label("Form1_Unload_Err")
+F.Intrinsic.Control.If(V.Ambient.ErrorNumber,<>,0)
+	Function.Intrinsic.String.Concat("Project: GCG_MON_3542_EDI_Import.gas",V.Ambient.Newline,V.Ambient.Newline,"Subroutine: ",V.Ambient.CurrentSubroutine,V.Ambient.NewLine,"Error Occurred ",V.Ambient.ErrorNumber," with description ",V.Ambient.ErrorDescription,V.Local.sError)
+	F.Intrinsic.UI.Msgbox(V.Local.sError)
+	F.Intrinsic.Control.End
+
+Function.Intrinsic.Control.EndIf
+
+
+Program.Sub.Form1_Unload.End
+
+Program.Sub.Excel.Start
+F.Intrinsic.Control.SetErrorHandler("Excel_Err")
+F.Intrinsic.Control.ClearErrors
+
+V.Local.sError.Declare(String)
+
+
+v.Local.sFile.Declare(String)
+v.Local.sData.Declare(String)
+v.Local.sElements.Declare(String)
+v.Local.sCustInfo.Declare(String)
+v.Local.sState.Declare(String)
+v.Local.sAddress.Declare(String)
+v.Local.sCust.Declare(String)
+v.Local.sShipSeq.Declare(String)
+v.Local.sSql.Declare(String)
+v.Local.sPO.Declare(String)
+v.Local.sHeader.Declare(String)
+v.Local.sLine.Declare(String)
+v.Local.sPOLine.Declare(String)
+v.Local.sNote.Declare(String)
+v.Local.sNoteLine.Declare(String)
+v.Local.sItemNum.Declare(String)
+v.Local.sCustName.Declare(String)
+v.Local.sdate.Declare(String)
+v.Local.iCount.Declare(Long)
+v.Local.iNoteCount.Declare(Long)
+
+v.Local.sElements.Set("sPOType*!*sPONum*!*sPODate*!*sCreateDate*!*sPOStatus*!*sGenOrdNum*!*sBuyCon*!*sHeadNote*!*sShipper*!*sCurr*!*sBillTo*!*sShipTo*!*sItemNum*!*sItemQty*!*sUOM*!*sUnitPrice*!*sVenCatNum*!*sBuyPartNum*!*sEngDrawNum*!*sItemNote*!*sItemTotAmt*!*dDueDate*!*sRelNum*!*sRelQty*!*dRelDueDate*!*sRelNote")
+
+'read in the excel file
+F.Automation.MSExcel.ReadSpreadsheet(v.Args.sFile, v.Local.sData)
+F.Intrinsic.String.Split(v.Local.sData, "&^&", v.Local.sData)
+F.Intrinsic.Variable.LoadUDTFromString(v.uGlobal.uPO, v.Local.sElements,v.Local.sData(0) ,"$!$", "*!*", True)
+F.Intrinsic.Variable.UDTFlagAll(v.uGlobal.uPO)
+F.Intrinsic.Variable.UDTMultiUnFlag(v.uGlobal.uPO!sPOType, "PO (Discrete)")
+F.Intrinsic.Variable.UDTDeleteFlagged(v.uGlobal.uPO)
+F.Intrinsic.Variable.UDTMultiQuickSort(v.uGlobal.uPO!sPONum, False)
+'For Testing
+'F.Intrinsic.Variable.UDTSetMemberValue(v.uGlobal.uPO!sID, "251142")
+
+f.Intrinsic.Control.For(v.Local.iCount, v.uGlobal.uPO.LBound, v.uGlobal.uPO.UBound, 1)
+	'Lets see what we can do here.
+	F.Intrinsic.String.Split(v.uGlobal.uPO(v.Local.iCount)!sPONum, "-", v.Local.sCustInfo)
+	V.uGlobal.uPO(v.Local.iCount)!sID.Set(v.Local.sCustInfo(0).String)
+	F.Intrinsic.String.Build("select Customer from CUST_XREF WHERE ID = '{0}'", v.Local.sCustInfo(0), v.Local.sSql)
+	F.ODBC.Connection!conx.ExecuteAndReturn(v.Local.sSql, v.Local.sCust)
+	F.Intrinsic.String.Split(v.uGlobal.uPO(v.Local.iCount)!sShipTo, ",", v.Local.sCustInfo)
+	F.Intrinsic.String.Split(v.Local.sCustInfo(2), " ", v.Local.sState)
+
+	F.Intrinsic.String.Build("Select Ship_Seq, Customer_Name from OE_Multi_Ship where Customer = '{0}' and Ship_City = '{1}' and Ship_State = '{2}' and Ship_Zip = '{3}'",v.Local.sCust, v.Local.sCustInfo(1).Trim, v.Local.sState(0).Trim, v.Local.sState(1).Trim, v.Local.sSql)
+	F.ODBC.Connection!conx.OpenLocalRecordsetRO("rstCust", v.Local.sSql)
+	F.Intrinsic.Control.If(v.ODBC.conx!rstCust.EOF, =, False)
+		V.Local.sShipSeq.Set(v.ODBC.conx!rstCust.FieldValTrim!Ship_Seq)
+		v.Local.sCustName.Set(v.ODBC.conx!rstCust.FieldValTrim!Customer_Name)
+	F.Intrinsic.Control.EndIf 
+	F.ODBC.conx!rstCust.Close
+	F.Intrinsic.String.RPad(v.uGlobal.uPO(v.Local.iCount)!sID, " ", 35, v.uGlobal.uPO(v.Local.iCount)!sID)
+	F.Intrinsic.String.RPad(v.uGlobal.uPO(v.Local.iCount)!sPONum, " ", 15, v.uGlobal.uPO(v.Local.iCount)!sPONum)
+
+	F.Intrinsic.Control.If(v.Local.sPO.Trim, !=, v.uGlobal.uPO(v.Local.iCount)!sPONum.Trim)
+		v.Local.sPOLine.Set(0)
+		v.Local.sPO.Set(v.uGlobal.uPO(v.Local.iCount)!sPONum)
+		F.Intrinsic.String.Format(v.uGlobal.uPO(v.Local.iCount)!dDueDate, "YYYYMMDD", v.Local.sdate)
+		'Need header information
+		F.Intrinsic.String.Build("{0}{1}000         {2}", v.uGlobal.uPO(v.Local.iCount)!sID, v.uGlobal.uPO(v.Local.iCount)!sPONum, v.Local.sdate, v.Local.sHeader)
+		F.Intrinsic.String.RPad(v.Local.sHeader, " ", 510, v.Local.sHeader)
+		F.Intrinsic.String.Build("{0}H ", v.Local.sHeader, v.Local.sHeader)
+		F.Intrinsic.Control.If(v.Local.sFile, !=, "")
+			F.Intrinsic.String.Build("{0}{1}{2}", v.Local.sFile, v.Ambient.NewLine, v.Local.sHeader, v.Local.sFile)
+		F.Intrinsic.Control.Else
+			v.Local.sFile.Set(v.Local.sHeader)
+		F.Intrinsic.Control.EndIf
+	F.Intrinsic.Control.EndIf
+	
+	'Build C record
+	F.Intrinsic.String.Build("{0}{1}000", v.uGlobal.uPO(v.Local.iCount)!sID, v.uGlobal.uPO(v.Local.iCount)!sPONum, v.Local.sHeader)
+	F.Intrinsic.String.RPad(v.Local.sHeader, " ", 54, v.Local.sHeader)
+	F.Intrinsic.String.Build("{0}{1}", v.Local.sHeader, v.Local.sCustName, v.Local.sHeader)
+	F.Intrinsic.String.RPad(v.Local.sHeader, " ", 94, v.Local.sHeader)
+	F.Intrinsic.String.Build("{0}{1}", v.Local.sHeader, v.Local.sCustInfo(0), v.Local.sHeader)
+	F.Intrinsic.String.RPad(v.Local.sHeader, " ", 294, v.Local.sHeader)
+	F.Intrinsic.String.Build("{0}{1}", v.Local.sHeader, v.Local.sCustInfo(1), v.Local.sHeader)
+	F.Intrinsic.String.RPad(v.Local.sHeader, " ", 319, v.Local.sHeader)
+	F.Intrinsic.String.Build("{0}{1}", v.Local.sHeader, v.Local.sState(0), v.Local.sHeader)
+	F.Intrinsic.String.RPad(v.Local.sHeader, " ", 321, v.Local.sHeader)
+	F.Intrinsic.String.Build("{0}{1}", v.Local.sHeader, v.Local.sState(1), v.Local.sHeader)
+	F.Intrinsic.String.RPad(v.Local.sHeader, " ", 334, v.Local.sHeader)
+	F.Intrinsic.String.Build("{0}{1}", v.Local.sHeader, v.Local.sState(2), v.Local.sHeader)
+	F.Intrinsic.String.RPad(v.Local.sHeader, " ", 510, v.Local.sHeader)
+	F.Intrinsic.String.Build("{0}C ", v.Local.sHeader, v.Local.sHeader)
+	F.Intrinsic.String.Build("{0}{1}{2}", v.Local.sFile, v.Ambient.NewLine, v.Local.sHeader, v.Local.sFile)
+
+	'Create the Line information now
+		F.Intrinsic.Math.Add(v.Local.sPoLine, 1, v.Local.sPOLine)
+		F.Intrinsic.String.LPad(v.Local.sPOLine, "0", 3, v.Local.sPOLine)
+		F.Intrinsic.String.RPad(v.uGlobal.uPO(v.Local.iCount)!sBuyPartNum, " ",20, v.uGlobal.uPO(v.Local.iCount)!sBuyPartNum)
+		F.Intrinsic.String.LPad(v.uGlobal.uPO(v.Local.iCount)!sItemQty, "0", 8, v.uGlobal.uPO(v.Local.iCount)!sItemQty) 
+		F.Intrinsic.String.RPad(v.uGlobal.uPO(v.Local.iCount)!sItemQty, "0", 12, v.uGlobal.uPO(v.Local.iCount)!sItemQty) 
+		F.Intrinsic.String.StripCharacters(v.uGlobal.uPO(v.Local.iCount)!sUnitPrice, v.uGlobal.uPO(v.Local.iCount)!sUnitPrice)
+		F.Intrinsic.String.LPad(v.uGlobal.uPO(v.Local.iCount)!sUnitPrice, "0", 10, v.uGlobal.uPO(v.Local.iCount)!sUnitPrice) 
+		F.Intrinsic.String.RPad(v.uGlobal.uPO(v.Local.iCount)!sUnitPrice, "0", 13, v.uGlobal.uPO(v.Local.iCount)!sUnitPrice)
+
+		F.Intrinsic.String.Build("{0}{1}{2} {3}  {4}", v.uGlobal.uPO(v.Local.iCount)!sID, v.uGlobal.uPO(v.Local.iCount)!sPONum, v.Local.sPOLine, v.uGlobal.uPO(v.Local.iCount)!sBuyPartNum, v.uGlobal.uPO(v.Local.iCount)!sItemQty, v.Local.sLine)
+		F.Intrinsic.String.RPad(v.Local.sLine, " ", 90, v.Local.sLine)
+		F.Intrinsic.String.Build("{0}{1}", v.Local.sLine, v.uGlobal.uPO(v.Local.iCount)!sUnitPrice, v.Local.sLine)
+
+		F.Intrinsic.String.RPad(v.Local.sLine, " ", 225, v.Local.sLine)
+		F.Intrinsic.String.LPad(v.uGlobal.uPO(v.Local.iCount)!sItemNum.Trim, "0", 3, v.uGlobal.uPO(v.Local.iCount)!sItemNum)
+		f.Intrinsic.String.Build("{0}{1}", v.Local.sLine, v.uGlobal.uPO(v.Local.iCount)!sItemNum, v.Local.sLine)
+		F.Intrinsic.String.RPad(v.Local.sLine, " ",266,v.Local.sLine)
+		F.Intrinsic.String.Format(v.uGlobal.uPO(v.Local.iCount)!dDueDate, "YYYYMMDD", v.Local.sdate)
+		f.Intrinsic.String.Build("{0}{1}", v.Local.sLine, v.Local.sdate, v.Local.sLine)
+		'add Ship Seq
+'		F.Intrinsic.String.RPad(v.Local.sLine, " ",275, v.Local.sLine)
+'		f.Intrinsic.String.Build("{0}{1}", v.Local.sLine, V.Local.sShipSeq, v.Local.sLine)
+
+		F.Intrinsic.String.RPad(v.Local.sLine, " ",354, v.Local.sLine)
+		f.Intrinsic.String.Build("{0}{1}", v.Local.sLine, v.uGlobal.uPO(v.Local.iCount)!sEngDrawNum, v.Local.sLine)
+
+		F.Intrinsic.String.RPad(v.Local.sLine, " ",474, v.Local.sLine)
+		F.Intrinsic.String.Build("{0}{1}", v.Local.sLine, v.Local.sdate, v.Local.sLine)
+		F.Intrinsic.String.RPad(v.Local.sLine, " ", 510, v.Local.sLine)
+		F.Intrinsic.String.Build("{0}1 ", v.Local.sLine, v.Local.sLine)
+		'Add Line to file Variable
+		F.Intrinsic.String.Build("{0}{1}{2}", v.Local.sFile, v.Ambient.NewLine,v.Local.sLine, v.Local.sFile)
+
+		'Note Information
+		'build Note
+		F.Intrinsic.String.LimitSplit(v.uGlobal.uPO(v.Local.iCount)!sItemNote, 30, v.Local.sNote)
+		v.Local.sNoteLine.Set("")
+		F.Intrinsic.Control.For(v.Local.iNoteCount, v.Local.sNote.LBound, v.Local.sNote.UBound, 1)
+			F.Intrinsic.String.RPad(v.Local.sNote(v.Local.iNoteCount), " ", 30, v.Local.sNote(v.Local.iNoteCount))
+			F.Intrinsic.String.Build("{0}{1}", v.Local.sNoteLine, v.Local.sNote(v.Local.iNoteCount), v.Local.sNoteLine)
+		f.Intrinsic.Control.Next(v.Local.iNoteCount)
+		f.Intrinsic.String.RPad(v.Local.sNoteLine," ", 456, v.Local.sNoteLine)
+		F.Intrinsic.String.Build("{0}{1}{2} {3}N ", v.uGlobal.uPO(v.Local.iCount)!sID, v.uGlobal.uPO(v.Local.iCount)!sPONum, v.Local.sPOLine,v.Local.sNoteLine, v.Local.sLine)
+
+		F.Intrinsic.String.Build("{0}{1}{2}", v.Local.sFile, v.Ambient.NewLine, v.Local.sLine,v.Local.sFile)
+f.Intrinsic.Control.Next(v.Local.iCount)
+F.Intrinsic.String.Build("{0}{1}",v.Local.sfile, v.Ambient.NewLine, v.Local.sfile)
+F.Intrinsic.Variable.AddRV("sFileData", v.Local.sFile)
+
+F.Intrinsic.Control.ExitSub
+
+F.Intrinsic.Control.Label("Excel_Err")
+F.Intrinsic.Control.If(V.Ambient.ErrorNumber,<>,0)
+	Function.Intrinsic.String.Concat("Project: GCG_MON_3542_EDI_Import.gas",V.Ambient.Newline,V.Ambient.Newline,"Subroutine: ",V.Ambient.CurrentSubroutine,V.Ambient.NewLine,"Error Occurred ",V.Ambient.ErrorNumber," with description ",V.Ambient.ErrorDescription,V.Local.sError)
+	F.Intrinsic.UI.Msgbox(V.Local.sError)
+	F.Intrinsic.Control.CallSub(form1_unload)
+Function.Intrinsic.Control.EndIf
+
+
+Program.Sub.Excel.End
+
+Program.Sub.CreateFile.Start
+F.Intrinsic.Control.SetErrorHandler("CreateFile_Err")
+F.Intrinsic.Control.ClearErrors
+
+V.Local.sError.Declare(String)
+v.Local.sFilePath.Declare(String)
+v.Local.bExists.Declare(Boolean)
+
+F.Intrinsic.String.Build("{0}\EA850{2}", v.Caller.FilesDir, v.Caller.Terminal,v.Caller.CompanyCode, v.Local.sFilePath)
+F.Intrinsic.File.String2File(v.Local.sFilePath, v.Args.sFileData)
+F.Intrinsic.Control.ExitSub
+
+F.Intrinsic.Control.Label("CreateFile_Err")
+F.Intrinsic.Control.If(V.Ambient.ErrorNumber,<>,0)
+	Function.Intrinsic.String.Concat("Project: GCG_MON_3542_EDI_Import.gas",V.Ambient.Newline,V.Ambient.Newline,"Subroutine: ",V.Ambient.CurrentSubroutine,V.Ambient.NewLine,"Error Occurred ",V.Ambient.ErrorNumber," with description ",V.Ambient.ErrorDescription,V.Local.sError)
+	F.Intrinsic.UI.Msgbox(V.Local.sError)
+	F.Intrinsic.Control.CallSub(form1_unload)
+Function.Intrinsic.Control.EndIf
+
+
+Program.Sub.CreateFile.End
+
+Program.Sub.Comments.Start
+${$0$}$$}$SKT$}$1/14/2016 9:35:20 AM$}$False
+Program.Sub.Comments.End
